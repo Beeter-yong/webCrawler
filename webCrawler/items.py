@@ -9,6 +9,15 @@ import scrapy
 
 
 class WebcrawlerItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    houseUrl = scrapy.Field()
+    price = scrapy.Field()
+    area = scrapy.Field()
+    houseType = scrapy.Field()
+    towards = scrapy.Field()
+    address = scrapy.Field()
+    regional = scrapy.Field()
+    shopping = scrapy.Field()
+    community = scrapy.Field()
+    floor = scrapy.Field()
+    time = scrapy.Field()
+

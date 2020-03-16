@@ -48,3 +48,4 @@ class LianjiaCrawlerSpider(scrapy.Spider):
             next_url_num = str(int(next_url_num)+1)
             next_url = 'https://bj.lianjia.com/zufang/pg' + next_url_num + '/#contentList'
             yield scrapy.Request(next_url, callback=self.parse)
+

@@ -7,8 +7,9 @@ class LianjiaCrawlerSpider(scrapy.Spider):
     name = 'lianjia_crawler'
     allowed_domains = ['bj.lianjia.com']
     # start_urls = ['https://bj.lianjia.com/zufang/#contentList']
-    start_urls = ['https://bj.lianjia.com/zufang/pg20/#contentList']
+    start_urls = ['https://bj.lianjia.com/zufang/pg1/#contentList']
 
+    i = 1
     def parse(self, response):
         contentListItems = response.xpath("//div[@class='content__list--item']") #房源列表模块
         for contentListItem in contentListItems:
@@ -41,11 +42,21 @@ class LianjiaCrawlerSpider(scrapy.Spider):
                                   )
             yield item
 
-        next_url_num = response.xpath("//div[@class='content__pg']/@data-curpage").get()
-        if not next_url_num:
+        self.i += 1
+        next_url = 'https://bj.lianjia.com/zufang/pg' + str(self.i) + '/#contentList'
+        if not next_url:
             return
         else:
-            next_url_num = str(int(next_url_num)+1)
-            next_url = 'https://bj.lianjia.com/zufang/pg' + next_url_num + '/#contentList'
-            yield scrapy.Request(next_url, callback=self.parse)
+            try:
+                print(next_url + '-----------')
+                yield scrapy.Request(next_url, callback=self.parse)
+            except:
+                print(next_url +'发生异常-----------')
+                self.i += 1
+                next_url = 'https://bj.lianjia.com/zufang/pg' + str(self.i) + '/#contentList'
+                if not next_url:
+                    return
+                else:
+                    yield scrapy.Request(next_url, callback=self.parse)
+
 

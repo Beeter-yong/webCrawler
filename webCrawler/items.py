@@ -8,7 +8,9 @@
 import scrapy
 
 
+
 class WebcrawlerItem(scrapy.Item):
+    # 房源信息
     houseUrl = scrapy.Field()
     price = scrapy.Field()
     area = scrapy.Field()
@@ -21,3 +23,8 @@ class WebcrawlerItem(scrapy.Item):
     floor = scrapy.Field()
     time = scrapy.Field()
 
+class ShoppingItem(scrapy.Item):
+    # 商圈链接
+    shopingUrl = scrapy.Field()
+    shopingName = scrapy.Field()
+    shopingRegitional = scrapy.Field()

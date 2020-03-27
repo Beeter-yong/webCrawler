@@ -4,7 +4,7 @@ from webCrawler.items import ShoppingItem
 
 # 爬取所有商圈的链接，并且存储到数据库
 class LianjiaCommunitySpider(scrapy.Spider):
-    name = 'lianjia_community'
+    name = 'lianjia_shopping'
     allowed_domains = ['bj.lianjia.com']
     start_urls = ['https://bj.lianjia.com/xiaoqu/']
     custom_settings = {

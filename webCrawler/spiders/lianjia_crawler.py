@@ -7,9 +7,9 @@ class LianjiaCrawlerSpider(scrapy.Spider):
     name = 'lianjia_crawler'
     allowed_domains = ['bj.lianjia.com']
     # start_urls = ['https://bj.lianjia.com/zufang/#contentList']
-    start_urls = ['https://bj.lianjia.com/zufang/pg612/#contentList']
+    start_urls = ['https://bj.lianjia.com/zufang/pg1/#contentList']
 
-    i = 151
+    i = 1
     def parse(self, response):
         try:
             contentListItems = response.xpath("//div[@class='content__list--item']") #房源列表模块

@@ -1,7 +1,7 @@
 import pymysql
 from webCrawler.utils.logger import Logger
 
-logger = Logger()
+logger = Logger(name='mysql')
 
 class database:
     # 数据库连接

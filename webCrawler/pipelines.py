@@ -6,6 +6,9 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 import csv
 import pymysql
+from webCrawler.utils.mysqlUtil import database
+from webCrawler.utils.logger import Logger
+logger = Logger(name='pipeline')
 
 class MysqlPipeline(object):
     # 向数据库存储租房信息
@@ -85,3 +88,28 @@ class DownShoppingUrlPipeline(object):
     def close_spider(self, spider):
         self.cursor.close()
         self.connect.close()
+
+
+class DownCommunityInfoPipeline(object):
+    # 向数据库存储小区信息
+    def open_spider(self, spider):
+        self.db = database()
+
+    def process_item(self, item, spider):
+        sql_select = "select * from lianjiaCommunityInfo where communityUrl='%s';" % (item['communityUrl'])
+        result = self.db.selectSql(sql_select)
+        if result:
+            logger.info("此小区已经记录在数据库中" + item['communityUrl'])
+            pass
+        else:
+            sql_add = "insert into lianjiaCommunityInfo(communityUrl, communityName, regional, shopping, communityImg, rentUrl, buildingTime, buildingType, propertyName, propertyFees, developer, buildingNum, houseingNum, nearbyStores, tag) " \
+                      "values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' );"%(
+                item['communityUrl'], item['communityName'], item['regional'], item['shopping'], item['communityImg'],
+                item['rentUrl'], item['buildingTime'], item['buildingType'], item['propertyName'], item['propertyFees'],
+                item['developer'], item['buildingNum'], item['houseingNum'], item['nearbyStores'], item['tag']
+            )
+            self.db.insertSql(sql_add)
+            return item
+
+    def close_spider(self, spider):
+        self.db.close()

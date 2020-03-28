@@ -49,3 +49,14 @@ class database:
         except Exception as e:
             logger.error("数据库更新错误" + e)
             self.connect.rollback()
+
+    # 传入SQL语句插入数据
+    def insertSql(self, sql):
+        try:
+            self.cursor.execute(sql)
+            self.connect.commit()
+            logger.info("插入一条数据---")
+        except Exception as e:
+            logger.error("数据库插入数据错误" + e)
+            self.connect.rollback()
+

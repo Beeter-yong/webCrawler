@@ -113,3 +113,29 @@ class DownCommunityInfoPipeline(object):
 
     def close_spider(self, spider):
         self.db.close()
+
+class DownRentInfoPipeline(object):
+    # 向数据库存储租房房源信息
+    def open_spider(self, spider):
+        self.db = database()
+
+    def process_item(self, item, spider):
+        sql_select = "select * from lianjiaRentInfo where houseUrl='%s';" % (item['houseUrl'])
+        result = self.db.selectSql(sql_select)
+        if result:
+            logger.info("此房源信息已经记录在数据库中" + item['houseUrl'])
+            pass
+        else:
+            sql_add = "insert into lianjiaRentInfo(houseUrl, price, area, houseType, towards, address, regional, shopping, community, floor, timeLast, timeNew, rentImg) " \
+                      "values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');" % (
+                          item['houseUrl'], item['price'], item['area'], item['houseType'],
+                          item['towards'],
+                          item['address'], item['regional'], item['shopping'], item['community'],
+                          item['floor'],
+                          item['time'], item['timeNew'], item['rentImg']
+                      )
+            self.db.insertSql(sql_add)
+            return item
+
+    def close_spider(self, spider):
+        self.db.close()

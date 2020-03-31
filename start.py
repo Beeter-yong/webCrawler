@@ -6,4 +6,6 @@ from scrapy import cmdline
 # 爬取商圈链接共241条
 # cmdline.execute('scrapy crawl lianjia_shopping '.split())
 # 根据商圈链接爬取小区信息
-cmdline.execute('scrapy crawl lianjia_community '.split())
+# cmdline.execute('scrapy crawl lianjia_community '.split())
+# 根据小区信息爬取租房信息
+cmdline.execute('scrapy crawl lianjia_rent '.split())

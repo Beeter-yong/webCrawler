@@ -47,16 +47,3 @@ class RentItem(scrapy.Item):
     timeNew = scrapy.Field()
     rentImg = scrapy.Field()
 
-class WebcrawlerItem(scrapy.Item):
-    # 房源信息
-    houseUrl = scrapy.Field()
-    price = scrapy.Field()
-    area = scrapy.Field()
-    houseType = scrapy.Field()
-    towards = scrapy.Field()
-    address = scrapy.Field()
-    regional = scrapy.Field()
-    shopping = scrapy.Field()
-    community = scrapy.Field()
-    floor = scrapy.Field()
-    time = scrapy.Field()

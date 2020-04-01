@@ -76,7 +76,8 @@ class LianjiaRentSpider(scrapy.Spider):
                                           address=address, regional=regional, shopping=shopping, community=community,
                                           floor=floor, time=time, timeNew=timeNew, rentImg=rentImg
                                           )
-                    # yield item
+                    yield item
+                    # break
                 except Exception as e:
                     logger.error("出现了小区租房链接却租房数为空")
                     continue
@@ -85,10 +86,15 @@ class LianjiaRentSpider(scrapy.Spider):
             totalPage = pagedata.xpath("./@data-totalpage").get()
             curPage = pagedata.xpath("./@data-curpage").get()
 
-            urlfragments = response.url.split("/")
+
+            urlNow = response.url
             if int(curPage) < int(totalPage):
-                curPage = str(int(curPage) + 1)
-                nextUrl = urlfragments[0] + '//' + urlfragments[2] + '/' + urlfragments[3] + '/pg%s' % curPage + urlfragments[4] + '/'
+                urlfragments = response.url.split("/")
+                curPageadd = str(int(curPage) + 1)
+                if 'pg' in urlNow:
+                    nextUrl = urlNow.replace('pg%s' % curPage, 'pg%s' % curPageadd)
+                else:
+                    nextUrl = urlfragments[0] + '//' + urlfragments[2] + '/' + urlfragments[3] + '/pg%s' % curPageadd + urlfragments[4] + '/'
                 try:
                     logger.info("爬取房源的下一页" + nextUrl)
                     yield scrapy.Request(nextUrl, callback=self.parse)
@@ -97,19 +103,18 @@ class LianjiaRentSpider(scrapy.Spider):
                     logger.error("房源爬取下一页出错" + nextUrl)
             else:
                 print("===========================")
-                urlNow = response.url
                 if 'pg' in urlNow:
                     urlNow = urlNow.replace('pg%s' % curPage, '')
 
                 # 当该商圈的所有房源爬取完成后将相应的标志设为1，目的是断点续爬的实现
                 sql = "UPDATE lianjiaCommunityInfo SET visited=1 WHERE rentUrl='%s';" % urlNow
-                # db.updateSql(sql)
+                db.updateSql(sql)
                 logger.info("一条小区链接爬取完成" + response.url)
         else:
             logger.info('该小区没有租房信息' + response.url)
             urlNow = response.url
-            sql = "UPDATE lianjiaCommunityInfo SET visited=1 WHERE rentUrl='%s';" % urlNow
-            # db.updateSql(sql)
+            sql = "UPDATE lianjiaCommunityInfo SET visited=2 WHERE rentUrl='%s';" % urlNow
+            db.updateSql(sql)
             logger.info("一条没有租房信息的小区链接爬取完成" + response.url)
             pass
 

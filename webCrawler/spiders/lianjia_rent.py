@@ -36,7 +36,10 @@ class LianjiaRentSpider(scrapy.Spider):
 
     def parse(self, response):
         # 爬取房源信息
-        if '0' not in response.xpath("//span[@class='q']/text()").get():
+        rentNum = response.xpath("//span[@class='q']/text()").get()
+        rentNum = rentNum.replace('小区在租：', '')
+        rentNum = rentNum.replace('套', '')
+        if '0' != rentNum:
             contentListItems = response.xpath("//div[@class='content__list'][1]//div[@class='content__list--item']") #房源列表模块
             for contentListItem in contentListItems:
                 try:
@@ -73,7 +76,7 @@ class LianjiaRentSpider(scrapy.Spider):
                                           address=address, regional=regional, shopping=shopping, community=community,
                                           floor=floor, time=time, timeNew=timeNew, rentImg=rentImg
                                           )
-                    yield item
+                    # yield item
                 except Exception as e:
                     logger.error("出现了小区租房链接却租房数为空")
                     continue
@@ -100,9 +103,13 @@ class LianjiaRentSpider(scrapy.Spider):
 
                 # 当该商圈的所有房源爬取完成后将相应的标志设为1，目的是断点续爬的实现
                 sql = "UPDATE lianjiaCommunityInfo SET visited=1 WHERE rentUrl='%s';" % urlNow
-                db.updateSql(sql)
+                # db.updateSql(sql)
                 logger.info("一条小区链接爬取完成" + response.url)
         else:
             logger.info('该小区没有租房信息' + response.url)
+            urlNow = response.url
+            sql = "UPDATE lianjiaCommunityInfo SET visited=1 WHERE rentUrl='%s';" % urlNow
+            # db.updateSql(sql)
+            logger.info("一条没有租房信息的小区链接爬取完成" + response.url)
             pass
 
